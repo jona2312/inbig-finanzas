@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design System — INbig Finanzas ─────────────────────────────────────── */
+:root {
+  /* Light mode (fallback) */
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #f8fafc;
+  --border: #e2e8f0;
+  --accent: #f1f5f9;
+  --muted-foreground: #64748b;
+  --primary: #10b981; /* emerald-500 */
+}
+
+.dark {
+  /* Dark mode — estilo Bloomberg/terminal */
+  --background: #0a0a0f;
+  --foreground: #f1f5f9;
+  --card: #111118;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: rgba(255, 255, 255, 0.06);
+  --muted-foreground: #94a3b8;
+  --primary: #10b981;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Números financieros */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+  .positive { @apply text-emerald-400; }
+  .negative { @apply text-red-400; }
+}
