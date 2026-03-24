@@ -16,7 +16,8 @@ Si no sabes algo o no tienes datos en tiempo real, dilo claramente.`
 export async function POST(req: NextRequest) {
   try {
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    // TODO: usar user para rate limiting por tier
+    await supabase.auth.getUser()
 
     // Límite de mensajes por plan (TODO: implementar rate limiting por tier)
     const { messages } = await req.json()
