@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { createBrowserClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+
 
 const PAISES = [
   { value: 'AR', label: '🇦🇷 Argentina' },
@@ -19,8 +19,7 @@ const PAISES = [
 ]
 
 export default function RegisterPage() {
-  const router   = useRouter()
-  const supabase = createBrowserClient()
+  const supabase = createClient()
 
   const [name,     setName]     = useState('')
   const [email,    setEmail]    = useState('')

@@ -1,7 +1,7 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function AdminDashboardPage() {
-  const supabase = await createServerClient()
+  const supabase = createClient()
 
   // Métricas en paralelo
   const [
@@ -10,7 +10,7 @@ export default async function AdminDashboardPage() {
     { count: proPlusUsers },
     { count: totalArticles },
     { count: totalBriefings },
-    { data: recentEvents },
+    { data: recentEventsData },
   ] = await Promise.all([
     supabase.from('users').select('*', { count: 'exact', head: true }),
     supabase.from('users').select('*', { count: 'exact', head: true }).eq('tier', 'in_pro'),
@@ -32,7 +32,9 @@ export default async function AdminDashboardPage() {
   ]
 
   // Agrupar eventos por tipo
-  const eventCounts = (recentEvents ?? []).reduce<Record<string, number>>((acc, e) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recentEvents = (recentEventsData ?? []) as any[]
+  const eventCounts = recentEvents.reduce<Record<string, number>>((acc, e) => {
     acc[e.event_type] = (acc[e.event_type] ?? 0) + 1
     return acc
   }, {})

@@ -28,9 +28,6 @@ export async function PolymarketWidget() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {events.map((event) => {
-          const topOutcome = event.outcomes.reduce((a, b) => a.price > b.price ? a : b, event.outcomes[0])
-          const pct = topOutcome ? Math.round(topOutcome.price * 100) : null
-
           return (
             <a
               key={event.id}

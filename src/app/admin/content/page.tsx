@@ -1,9 +1,10 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function AdminContentPage() {
-  const supabase = await createServerClient()
+  const supabase = createClient()
 
-  const [{ data: articles }, { data: briefings }] = await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [{ data: articlesRaw }, { data: briefingsRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, category, published_at, source_name, created_at')
@@ -15,6 +16,10 @@ export default async function AdminContentPage() {
       .order('created_at', { ascending: false })
       .limit(10),
   ])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const articles = articlesRaw as any[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const briefings = briefingsRaw as any[]
 
   return (
     <div className="p-6 space-y-6">

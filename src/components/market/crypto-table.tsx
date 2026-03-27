@@ -120,7 +120,6 @@ export default function CryptoTable({ coins, showSparkline = true }: CryptoTable
           </thead>
           <tbody className="divide-y divide-zinc-800/60">
             {filtered.map(coin => {
-              const up24 = isPositive(coin.price_change_percentage_24h)
               return (
                 <tr
                   key={coin.id}
@@ -182,7 +181,7 @@ export default function CryptoTable({ coins, showSparkline = true }: CryptoTable
 
         {filtered.length === 0 && (
           <div className="text-center py-12 text-zinc-500 text-sm">
-            No se encontraron resultados para "{search}"
+            No se encontraron resultados para &quot;{search}&quot;
           </div>
         )}
       </div>

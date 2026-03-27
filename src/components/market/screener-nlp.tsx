@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { FMPScreenerResult } from '@/services/fmp'
-import { formatMarketCap, isPositive } from '@/services/fmp'
+import { formatMarketCap } from '@/services/fmp'
 
 const EJEMPLOS = [
   'Acciones BYMA con mayor volumen',

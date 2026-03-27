@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 const TIER_LABELS: Record<string, { label: string; color: string }> = {
   lector:      { label: 'Lector',   color: 'text-zinc-400 bg-zinc-800' },
@@ -8,13 +8,15 @@ const TIER_LABELS: Record<string, { label: string; color: string }> = {
 }
 
 export default async function AdminUsersPage() {
-  const supabase = await createServerClient()
+  const supabase = createClient()
 
-  const { data: users } = await supabase
+  const { data: usersRaw } = await supabase
     .from('users')
     .select('id, email, full_name, tier, country, created_at, subscription_status, onboarding_completed')
     .order('created_at', { ascending: false })
     .limit(100)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const users = usersRaw as any[]
 
   return (
     <div className="p-6 space-y-6">
