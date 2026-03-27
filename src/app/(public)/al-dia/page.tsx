@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { getFeaturedArticles, getLatestArticles } from '@/services/articles'
 import { getDollarRates, getTopCrypto } from '@/services/market'
 import { ArticleCard } from '@/components/news/article-card'
 import { DollarWidget } from '@/components/market/dollar-widget'
 import { CryptoMiniWidget } from '@/components/market/crypto-mini-widget'
+import { PolymarketWidget } from '@/components/market/polymarket-widget'
 import { Newspaper, TrendingUp, Zap } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -150,6 +152,11 @@ export default async function AlDiaPage() {
         <div className="space-y-4">
           <DollarWidget />
           <CryptoMiniWidget />
+
+          {/* Polymarket — predicciones */}
+          <Suspense fallback={<div className="h-48 bg-zinc-900 rounded-xl animate-pulse" />}>
+            <PolymarketWidget />
+          </Suspense>
 
           {/* Categorías rápidas */}
           <div className="rounded-xl border border-border/40 bg-card p-4">
