@@ -44,7 +44,7 @@ interface TooltipState {
   change: number
 }
 
-type Timeframe = '1M' | '3M' | '6M' | '1Y' | '2Y'
+export type Timeframe = '1M' | '3M' | '6M' | '1Y' | '2Y' | 'MAX'
 
 interface LightweightChartProps {
   defaultSymbol?:    string
@@ -69,11 +69,12 @@ const DEFAULT_SYMBOLS = [
 ]
 
 const TIMEFRAMES: { label: string; value: Timeframe; days: number }[] = [
-  { label: '1M', value: '1M', days: 30  },
-  { label: '3M', value: '3M', days: 90  },
-  { label: '6M', value: '6M', days: 180 },
-  { label: '1A', value: '1Y', days: 365 },
-  { label: '2A', value: '2Y', days: 730 },
+  { label: '1M',  value: '1M',  days: 30   },
+  { label: '3M',  value: '3M',  days: 90   },
+  { label: '6M',  value: '6M',  days: 180  },
+  { label: '1A',  value: '1Y',  days: 365  },
+  { label: '2A',  value: '2Y',  days: 730  },
+  { label: 'MAX', value: 'MAX', days: 1825 }, // 5 años
 ]
 
 // ─── Component ────────────────────────────────────────────────────────────────
