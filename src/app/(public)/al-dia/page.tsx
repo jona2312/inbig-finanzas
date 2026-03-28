@@ -67,9 +67,9 @@ function TickerStrip({
   return (
     <div className="bg-zinc-950 border-b border-zinc-800 overflow-hidden">
       <div className="flex items-center gap-0 overflow-x-auto scrollbar-hide">
-        <div className="flex items-center gap-1 px-3 py-2 bg-emerald-500/10 border-r border-zinc-800 shrink-0">
-          <Radio className="w-3 h-3 text-emerald-400 animate-pulse" />
-          <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Live</span>
+        <div className="flex items-center gap-1 px-3 py-2 bg-amber-500/10 border-r border-zinc-800 shrink-0">
+          <Radio className="w-3 h-3 text-amber-400 animate-pulse" />
+          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Live</span>
         </div>
         {items.map((item, i) => (
           <div
@@ -79,7 +79,7 @@ function TickerStrip({
             <span className="text-[11px] text-zinc-500 font-medium">{item.label}</span>
             <span className="text-[11px] text-white font-semibold tabular-nums">{item.value}</span>
             {item.change != null && (
-              <span className={`text-[10px] font-medium tabular-nums ${item.change >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              <span className={`text-[10px] font-medium tabular-nums ${item.change >= 0 ? 'text-amber-400' : 'text-red-400'}`}>
                 {item.change >= 0 ? '▲' : '▼'} {Math.abs(item.change).toFixed(2)}%
               </span>
             )}
@@ -106,13 +106,13 @@ function MacroCard({
   const positive = change != null && change >= 0
 
   return (
-    <div className={`rounded-xl border p-4 ${accent ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-zinc-800 bg-zinc-900'}`}>
+    <div className={`rounded-xl border p-4 ${accent ? 'border-amber-500/30 bg-amber-500/5' : 'border-zinc-800 bg-zinc-900'}`}>
       <p className="text-xs text-zinc-500 mb-1">{label}</p>
-      <p className={`text-2xl font-bold tabular-nums ${accent ? 'text-emerald-400' : 'text-white'}`}>
+      <p className={`text-2xl font-bold tabular-nums ${accent ? 'text-amber-400' : 'text-white'}`}>
         {value}
       </p>
       {change != null ? (
-        <div className={`flex items-center gap-1 mt-1 text-xs ${positive ? 'text-emerald-400' : 'text-red-400'}`}>
+        <div className={`flex items-center gap-1 mt-1 text-xs ${positive ? 'text-amber-400' : 'text-red-400'}`}>
           {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
           <span>{pct(change)}</span>
           {sub && <span className="text-zinc-600 ml-1">{sub}</span>}
@@ -132,7 +132,7 @@ function BriefingCard({ briefing }: { briefing: Pick<BriefingRow, 'id' | 'titulo
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+            <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
               {briefing.tipo}
             </span>
           </div>
@@ -190,14 +190,12 @@ export default async function AlDiaPage() {
     getTopCrypto(6),
   ])
 
-  // Datos para las macropills
   const blue = dollar.find(d => d.nombre === 'Blue')
   const mep = dollar.find(d => d.nombre === 'MEP') ?? dollar.find(d => d.nombre === 'Bolsa')
   const oficial = dollar.find(d => d.nombre === 'Oficial')
   const btc = crypto[0]
   const eth = crypto[1]
 
-  // Brecha dólar blue vs oficial
   const brecha =
     blue?.venta && oficial?.venta
       ? (((blue.venta - oficial.venta) / oficial.venta) * 100)
@@ -225,8 +223,8 @@ export default async function AlDiaPage() {
         <div className="flex items-end justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Zap className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+              <Zap className="w-4 h-4 text-amber-400" />
+              <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider">
                 INBIG Finanzas
               </span>
             </div>
@@ -347,7 +345,7 @@ export default async function AlDiaPage() {
                 </div>
                 <a
                   href="/noticias"
-                  className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+                  className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
                 >
                   Ver todas <ArrowRight className="w-3 h-3" />
                 </a>
@@ -373,7 +371,7 @@ export default async function AlDiaPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-white">Tipos de dólar</h3>
-                <a href="/divisas" className="text-xs text-emerald-400 hover:underline">
+                <a href="/divisas" className="text-xs text-amber-400 hover:underline">
                   Ver análisis →
                 </a>
               </div>
@@ -398,7 +396,7 @@ export default async function AlDiaPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-white">Crypto</h3>
-                <a href="/crypto" className="text-xs text-emerald-400 hover:underline">
+                <a href="/crypto" className="text-xs text-amber-400 hover:underline">
                   Ver más →
                 </a>
               </div>
@@ -413,7 +411,7 @@ export default async function AlDiaPage() {
                       <p className="text-xs font-semibold text-white">
                         ${c.price.toLocaleString('en-US', { maximumFractionDigits: c.price < 1 ? 4 : 0 })}
                       </p>
-                      <p className={`text-[10px] ${c.change24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <p className={`text-[10px] ${c.change24h >= 0 ? 'text-amber-400' : 'text-red-400'}`}>
                         {c.change24h >= 0 ? '▲' : '▼'} {Math.abs(c.change24h).toFixed(2)}%
                       </p>
                     </div>
@@ -422,7 +420,7 @@ export default async function AlDiaPage() {
               </div>
             </div>
 
-            {/* Polymarket — predicciones LATAM */}
+            {/* Polymarket */}
             <Suspense fallback={<div className="h-48 bg-zinc-900 border border-zinc-800 rounded-xl animate-pulse" />}>
               <PolymarketWidget />
             </Suspense>
@@ -435,7 +433,7 @@ export default async function AlDiaPage() {
               <div className="space-y-1.5">
                 <CategoryPill label="Mercados" href="/mercados" color="text-orange-400" />
                 <CategoryPill label="Crypto" href="/crypto" color="text-yellow-400" />
-                <CategoryPill label="Divisas" href="/divisas" color="text-emerald-400" />
+                <CategoryPill label="Divisas" href="/divisas" color="text-amber-400" />
                 <CategoryPill label="Noticias" href="/noticias" color="text-blue-400" />
                 <CategoryPill label="Finanzas" href="/finanzas" color="text-purple-400" />
                 <CategoryPill label="Glosario" href="/glosario" color="text-pink-400" />
@@ -443,17 +441,17 @@ export default async function AlDiaPage() {
             </div>
 
             {/* Banner upgrade */}
-            <div className="bg-gradient-to-br from-emerald-900/30 to-zinc-900 border border-emerald-500/20 rounded-xl p-4">
+            <div className="bg-gradient-to-br from-amber-900/20 to-zinc-900 border border-amber-500/20 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Zap className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm font-semibold text-emerald-400">IN Pro</span>
+                <Zap className="w-4 h-4 text-amber-400" />
+                <span className="text-sm font-semibold text-amber-400">IN Pro</span>
               </div>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Copiloto IA completo, fuentes en tiempo real, alertas de mercado y análisis profundo para inversores LATAM.
               </p>
               <a
                 href="/planes"
-                className="inline-block mt-3 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg transition-colors w-full text-center"
+                className="inline-block mt-3 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 px-4 py-2 rounded-lg transition-colors w-full text-center"
               >
                 Ver planes
               </a>
