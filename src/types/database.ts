@@ -1,237 +1,493 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// INbig Finanzas — Database Types (sincronizado con Supabase sa-east-1)
+// INbig Finanzas — Database Types (auto-generado desde Supabase MCP)
+// No editar manualmente — regenerar con: supabase gen types typescript
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
-export type SubscriptionTier = 'free' | 'inbasico' | 'pro' | 'pro_plus'
-export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing'
-export type BriefingTipo = 'pre_market' | 'midday' | 'recap'
-export type AssetType = 'stock' | 'crypto' | 'forex' | 'commodity' | 'bond'
-
-export interface Database {
+export type Database = {
+  __InternalSupabase: {
+    PostgrestVersion: "14.4"
+  }
   public: {
     Tables: {
-
-      // ─── Articles (151 rows — noticias reales) ──────────────────────────
+      affiliate_payouts: {
+        Row: {
+          affiliate_id: string
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          period_end: string
+          period_start: string
+          referral_count: number
+          status: string
+        }
+        Insert: {
+          affiliate_id: string
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          period_end: string
+          period_start: string
+          referral_count?: number
+          status?: string
+        }
+        Update: {
+          affiliate_id?: string
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          period_end?: string
+          period_start?: string
+          referral_count?: number
+          status?: string
+        }
+        Relationships: []
+      }
       articles: {
         Row: {
-          id: string
-          title: string
-          content: string | null
-          excerpt: string | null
-          summary: string | null
-          category: string
-          source: string | null
-          image_url: string | null
           author: string | null
-          published_at: string
+          category: Database["public"]["Enums"]["article_category"]
+          content: string
           created_at: string
-          updated_at: string
-          is_featured: boolean
-          view_count: number
+          excerpt: string | null
           external_url: string | null
-          slug: string | null
-          urgency_level: string | null
           frontend_tag: string | null
-        }
-        Insert: Omit<Database['public']['Tables']['articles']['Row'], 'id' | 'created_at' | 'updated_at' | 'view_count'>
-        Update: Partial<Database['public']['Tables']['articles']['Insert']>
-      }
-
-      // ─── Users ──────────────────────────────────────────────────────────
-      users: {
-        Row: {
           id: string
-          email: string
-          tier: SubscriptionTier
-          full_name: string | null
-          avatar_url: string | null
-          portfolio_value: number | null
-          created_at: string
-          updated_at: string
-          deleted_at: string | null
-          phone: string | null
-          country: string | null
-          preferences: Json | null
-          onboarding_completed: boolean
+          image_url: string | null
+          is_featured: boolean | null
+          published_at: string | null
+          slug: string | null
           source: string | null
-        }
-        Insert: Omit<Database['public']['Tables']['users']['Row'], 'created_at' | 'updated_at'>
-        Update: Partial<Database['public']['Tables']['users']['Insert']>
-      }
-
-      // ─── Subscriptions ──────────────────────────────────────────────────
-      subscriptions: {
-        Row: {
-          id: string
-          user_id: string
-          tier: SubscriptionTier
-          status: SubscriptionStatus
-          started_at: string
-          expires_at: string | null
-          stripe_subscription_id: string | null
-          mp_subscription_id: string | null
-          stripe_customer_id: string | null
-          current_period_start: string | null
-          current_period_end: string | null
-          cancel_at_period_end: boolean
-          created_at: string
+          summary: string | null
+          title: string
           updated_at: string
+          urgency_level: string | null
+          view_count: number | null
         }
-        Insert: Omit<Database['public']['Tables']['subscriptions']['Row'], 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Database['public']['Tables']['subscriptions']['Insert']>
+        Insert: {
+          author?: string | null
+          category: Database["public"]["Enums"]["article_category"]
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          external_url?: string | null
+          frontend_tag?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          published_at?: string | null
+          slug?: string | null
+          source?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+          urgency_level?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          author?: string | null
+          category?: Database["public"]["Enums"]["article_category"]
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          external_url?: string | null
+          frontend_tag?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          published_at?: string | null
+          slug?: string | null
+          source?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          urgency_level?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
       }
-
-      // ─── Briefings (IA — 3 cortes diarios) ──────────────────────────────
       briefings: {
         Row: {
+          agenda: Json | null
+          created_at: string | null
+          drivers: Json | null
+          fuentes: Json | null
           id: string
-          tipo: BriefingTipo
-          titulo: string
-          drivers: Json | null       // array de drivers del mercado
-          regime: string | null       // régimen de mercado (risk-on/off)
-          top_movers: Json | null     // activos más movidos
-          que_vigilar: Json | null    // alertas/watchlist editorial
-          agenda: Json | null         // agenda macro del día
-          fuentes: Json | null        // fuentes usadas
           modelo_usado: string | null
-          published_at: string
-          created_at: string
+          published_at: string | null
+          que_vigilar: Json | null
+          regime: string | null
+          tipo: string
+          titulo: string | null
+          top_movers: Json | null
         }
-        Insert: Omit<Database['public']['Tables']['briefings']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['briefings']['Insert']>
+        Insert: {
+          agenda?: Json | null
+          created_at?: string | null
+          drivers?: Json | null
+          fuentes?: Json | null
+          id?: string
+          modelo_usado?: string | null
+          published_at?: string | null
+          que_vigilar?: Json | null
+          regime?: string | null
+          tipo: string
+          titulo?: string | null
+          top_movers?: Json | null
+        }
+        Update: {
+          agenda?: Json | null
+          created_at?: string | null
+          drivers?: Json | null
+          fuentes?: Json | null
+          id?: string
+          modelo_usado?: string | null
+          published_at?: string | null
+          que_vigilar?: Json | null
+          regime?: string | null
+          tipo?: string
+          titulo?: string | null
+          top_movers?: Json | null
+        }
+        Relationships: []
       }
-
-      // ─── Market Cache ────────────────────────────────────────────────────
-      market_cache: {
+      live_config: {
         Row: {
-          id: string
-          symbol: string
-          price: number | null
-          change: number | null
-          change_percent: number | null
-          volume: number | null
-          last_updated: string | null
-          data: Json | null
+          active_session_id: string | null
+          auto_detect_youtube: boolean | null
+          fallback_type: string | null
+          id: number
+          live_mode: boolean
           updated_at: string
         }
-        Insert: Omit<Database['public']['Tables']['market_cache']['Row'], 'id'>
-        Update: Partial<Database['public']['Tables']['market_cache']['Insert']>
-      }
-
-      // ─── Watchlist ───────────────────────────────────────────────────────
-      watchlist: {
-        Row: {
-          id: string
-          user_id: string
-          symbol: string
-          name: string | null
-          asset_type: AssetType | null
-          added_at: string
+        Insert: {
+          active_session_id?: string | null
+          auto_detect_youtube?: boolean | null
+          fallback_type?: string | null
+          id?: number
+          live_mode?: boolean
+          updated_at?: string
         }
-        Insert: Omit<Database['public']['Tables']['watchlist']['Row'], 'id'>
-        Update: Partial<Database['public']['Tables']['watchlist']['Insert']>
+        Update: {
+          active_session_id?: string | null
+          auto_detect_youtube?: boolean | null
+          fallback_type?: string | null
+          id?: number
+          live_mode?: boolean
+          updated_at?: string
+        }
+        Relationships: []
       }
-
-      // ─── Alerts ──────────────────────────────────────────────────────────
-      alerts: {
+      live_sessions: {
         Row: {
-          id: string
-          user_id: string
-          symbol: string
-          condition: string
-          trigger_value: number
-          active: boolean
-          triggered_at: string | null
+          categoria: string | null
           created_at: string
-          updated_at: string
-        }
-        Insert: Omit<Database['public']['Tables']['alerts']['Row'], 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Database['public']['Tables']['alerts']['Insert']>
-      }
-
-      // ─── Portfolio ───────────────────────────────────────────────────────
-      portfolio: {
-        Row: {
+          ended_at: string | null
           id: string
-          user_id: string
-          symbol: string
-          quantity: number
-          buy_price: number
-          buy_date: string | null
-          notes: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: Omit<Database['public']['Tables']['portfolio']['Row'], 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Database['public']['Tables']['portfolio']['Insert']>
-      }
-
-      // ─── Assistant Usage ─────────────────────────────────────────────────
-      assistant_usage: {
-        Row: {
-          id: string
-          user_id: string | null
-          session_id: string | null
-          button_type: string | null
-          query: string | null
-          answer: string | null
-          model_used: string | null
-          tokens_used: number | null
-          tier: SubscriptionTier | null
-          sources: Json | null
-          response_time_ms: number | null
-          created_at: string
-        }
-        Insert: Omit<Database['public']['Tables']['assistant_usage']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['assistant_usage']['Insert']>
-      }
-
-      // ─── Feedback ────────────────────────────────────────────────────────
-      feedback: {
-        Row: {
-          id: string
-          user_id: string | null
-          type: string
-          message: string
-          email: string | null
-          created_at: string
-        }
-        Insert: Omit<Database['public']['Tables']['feedback']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['feedback']['Insert']>
-      }
-
-      // ─── Audit Logs ──────────────────────────────────────────────────────
-      audit_logs: {
-        Row: {
-          id: string
-          event_type: string
-          entity_type: string | null
-          entity_id: string | null
-          user_id: string | null
+          mercado: string | null
           metadata: Json | null
-          created_at: string
+          pais: string | null
+          replay_url: string | null
+          source_id: string | null
+          started_at: string | null
+          status: string
+          subtitulo: string | null
+          titulo: string
+          viewers_peak: number | null
         }
-        Insert: Omit<Database['public']['Tables']['audit_logs']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['audit_logs']['Insert']>
+        Insert: {
+          categoria?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          mercado?: string | null
+          metadata?: Json | null
+          pais?: string | null
+          replay_url?: string | null
+          source_id?: string | null
+          started_at?: string | null
+          status?: string
+          subtitulo?: string | null
+          titulo: string
+          viewers_peak?: number | null
+        }
+        Update: {
+          categoria?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          mercado?: string | null
+          metadata?: Json | null
+          pais?: string | null
+          replay_url?: string | null
+          source_id?: string | null
+          started_at?: string | null
+          status?: string
+          subtitulo?: string | null
+          titulo?: string
+          viewers_peak?: number | null
+        }
+        Relationships: []
+      }
+      live_sources: {
+        Row: {
+          categoria: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          nombre: string
+          pais: string | null
+          priority: number | null
+          status: string
+          stream_url: string | null
+          tipo_fuente: string
+          updated_at: string
+          youtube_channel_id: string | null
+        }
+        Insert: {
+          categoria?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          nombre: string
+          pais?: string | null
+          priority?: number | null
+          status?: string
+          stream_url?: string | null
+          tipo_fuente: string
+          updated_at?: string
+          youtube_channel_id?: string | null
+        }
+        Update: {
+          categoria?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          nombre?: string
+          pais?: string | null
+          priority?: number | null
+          status?: string
+          stream_url?: string | null
+          tipo_fuente?: string
+          updated_at?: string
+          youtube_channel_id?: string | null
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          expires_at: string | null
+          id: string
+          mp_subscription_id: string | null
+          started_at: string
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          tier: Database["public"]["Enums"]["user_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          expires_at?: string | null
+          id?: string
+          mp_subscription_id?: string | null
+          started_at?: string
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tier: Database["public"]["Enums"]["user_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          expires_at?: string | null
+          id?: string
+          mp_subscription_id?: string | null
+          started_at?: string
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tier?: Database["public"]["Enums"]["user_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: number
+          page_path: string | null
+          properties: Json | null
+          referrer: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: number
+          page_path?: string | null
+          properties?: Json | null
+          referrer?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: number
+          page_path?: string | null
+          properties?: Json | null
+          referrer?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          avatar_url: string | null
+          country: string | null
+          created_at: string
+          deleted_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          is_admin: boolean | null
+          onboarding_completed: boolean | null
+          pais: string | null
+          phone: string | null
+          portfolio_value: number | null
+          preferences: Json | null
+          source: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_status: string | null
+          tier: Database["public"]["Enums"]["user_tier"]
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          country?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          is_admin?: boolean | null
+          onboarding_completed?: boolean | null
+          pais?: string | null
+          phone?: string | null
+          portfolio_value?: number | null
+          preferences?: Json | null
+          source?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          tier?: Database["public"]["Enums"]["user_tier"]
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          country?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          is_admin?: boolean | null
+          onboarding_completed?: boolean | null
+          pais?: string | null
+          phone?: string | null
+          portfolio_value?: number | null
+          preferences?: Json | null
+          source?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          tier?: Database["public"]["Enums"]["user_tier"]
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
-    Views: Record<string, never>
-    Functions: Record<string, never>
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
     Enums: {
-      subscription_tier: SubscriptionTier
-      subscription_status: SubscriptionStatus
+      article_category:
+        | "macro"
+        | "mercados"
+        | "empresas"
+        | "crypto"
+        | "divisas"
+        | "argentina"
+        | "opinion"
+      user_tier: "lector" | "in_basic" | "in_pro" | "in_pro_plus"
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }
 
-// ─── Convenience types ────────────────────────────────────────────────────────
-export type Article = Database['public']['Tables']['articles']['Row']
-export type UserProfile = Database['public']['Tables']['users']['Row']
-export type Subscription = Database['public']['Tables']['subscriptions']['Row']
-export type Briefing = Database['public']['Tables']['briefings']['Row']
-export type MarketCache = Database['public']['Tables']['market_cache']['Row']
-export type WatchlistItem = Database['public']['Tables']['watchlist']['Row']
-export type Alert = Database['public']['Tables']['alerts']['Row']
-export type PortfolioItem = Database['public']['Tables']['portfolio']['Row']
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<T extends keyof DefaultSchema["Tables"]> =
+  DefaultSchema["Tables"][T]["Row"]
+
+export type Enums<T extends keyof DefaultSchema["Enums"]> =
+  DefaultSchema["Enums"][T]
+
+// Helpers de uso frecuente
+export type UserRow = Tables<"users">
+export type ArticleRow = Tables<"articles">
+export type BriefingRow = Tables<"briefings">
+export type UserEventRow = Tables<"user_events">
+export type SubscriptionRow = Tables<"subscriptions">
+export type LiveConfigRow = Tables<"live_config">
+export type UserTier = Enums<"user_tier">
+export type ArticleCategory = Enums<"article_category">
+
+// Alias de conveniencia para imports existentes
+export type Article = ArticleRow

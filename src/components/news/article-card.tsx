@@ -35,10 +35,9 @@ export function ArticleCard({ article, variant = 'default' }: ArticleCardProps) 
     : article.external_url ?? '#'
   const isExternal = !article.slug && !!article.external_url
 
-  const timeAgo = formatDistanceToNow(new Date(article.published_at), {
-    addSuffix: true,
-    locale: es,
-  })
+  const timeAgo = article.published_at
+    ? formatDistanceToNow(new Date(article.published_at), { addSuffix: true, locale: es })
+    : 'Reciente'
 
   const categoryLabel = CATEGORY_LABELS[article.category] ?? article.category
   const categoryColor = CATEGORY_COLORS[article.category] ?? 'bg-zinc-500/15 text-zinc-400'

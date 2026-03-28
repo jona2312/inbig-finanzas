@@ -1,25 +1,21 @@
 import { createClient } from '@/lib/supabase/server'
+import type { ArticleRow, BriefingRow } from '@/types/database'
 
 export default async function AdminContentPage() {
   const supabase = createClient()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [{ data: articlesRaw }, { data: briefingsRaw }] = await Promise.all([
+  const [{ data: articles }, { data: briefings }] = await Promise.all([
     supabase
       .from('articles')
-      .select('id, title, category, published_at, source_name, created_at')
+      .select('id, title, category, published_at, source, created_at')
       .order('created_at', { ascending: false })
       .limit(30),
     supabase
       .from('briefings')
-      .select('id, title, tipo, created_at')
+      .select('id, titulo, tipo, created_at')
       .order('created_at', { ascending: false })
       .limit(10),
   ])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const articles = articlesRaw as any[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const briefings = briefingsRaw as any[]
 
   return (
     <div className="p-6 space-y-6">
@@ -37,14 +33,14 @@ export default async function AdminContentPage() {
         </h2>
         {briefings && briefings.length > 0 ? (
           <div className="space-y-2">
-            {briefings.map((b) => (
+            {briefings.map((b: Pick<BriefingRow, 'id' | 'titulo' | 'tipo' | 'created_at'>) => (
               <div key={b.id} className="flex items-center justify-between py-2 border-b border-zinc-800 last:border-0">
                 <div>
-                  <p className="text-sm text-white">{b.title || `Briefing ${b.tipo}`}</p>
+                  <p className="text-sm text-white">{b.titulo || `Briefing ${b.tipo}`}</p>
                   <p className="text-xs text-zinc-500">{b.tipo}</p>
                 </div>
                 <span className="text-xs text-zinc-500">
-                  {new Date(b.created_at).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })}
+                  {new Date(b.created_at ?? '').toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })}
                 </span>
               </div>
             ))}
@@ -71,7 +67,7 @@ export default async function AdminContentPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800">
-            {articles?.map((a) => (
+            {articles?.map((a: Pick<ArticleRow, 'id' | 'title' | 'category' | 'published_at' | 'source' | 'created_at'>) => (
               <tr key={a.id} className="hover:bg-zinc-800/30 transition-colors">
                 <td className="px-4 py-3">
                   <p className="text-white text-sm line-clamp-1">{a.title}</p>
@@ -82,10 +78,10 @@ export default async function AdminContentPage() {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-zinc-500 text-xs hidden md:table-cell">
-                  {a.source_name || '—'}
+                  {a.source || '—'}
                 </td>
                 <td className="px-4 py-3 text-zinc-500 text-xs whitespace-nowrap">
-                  {new Date(a.created_at ?? a.published_at).toLocaleDateString('es-AR')}
+                  {new Date(a.created_at ?? a.published_at ?? '').toLocaleDateString('es-AR')}
                 </td>
               </tr>
             ))}

@@ -28,7 +28,7 @@ export async function getLatestArticles(limit = 20, category?: ArticleCategory):
 
   const { data, error } = await query
   if (error) { console.error('getLatestArticles:', error); return [] }
-  return data ?? []
+  return (data ?? []) as Article[]
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
@@ -76,7 +76,7 @@ export async function getArticlesByCategory(
   ])
 
   if (error) { console.error('getArticlesByCategory:', error); return { articles: [], total: 0 } }
-  return { articles: data ?? [], total: count ?? 0 }
+  return { articles: (data ?? []) as Article[], total: count ?? 0 }
 }
 
 // TODO: implementar con RPC en Supabase
