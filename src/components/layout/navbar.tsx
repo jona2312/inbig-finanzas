@@ -3,41 +3,41 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { TrendingUp, Menu, X } from 'lucide-react'
+import { TrendingUp, Menu, X, Zap } from 'lucide-react'
 import { useState } from 'react'
 
 const NAV_ITEMS = [
-  { label: 'Al Día',      href: '/al-dia' },
-  { label: 'Mercados',    href: '/mercados' },
-  { label: 'Crypto',      href: '/crypto' },
-  { label: 'Divisas',     href: '/divisas' },
-  { label: 'Noticias',    href: '/noticias' },
-  { label: 'Finanzas',    href: '/finanzas' },
-  { label: 'Herramientas',href: '/herramientas' },
-  { label: 'Glosario',    href: '/glosario' },
+  { label: 'Al Día',   href: '/al-dia'   },
+  { label: 'Mercados', href: '/mercados'  },
+  { label: 'Crypto',   href: '/crypto'    },
+  { label: 'Divisas',  href: '/divisas'   },
+  { label: 'Noticias', href: '/noticias'  },
+  { label: 'Gráficos', href: '/grafico'   },
 ]
 
 export function Navbar() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  // Terminal es fullscreen — sin navbar
+  if (pathname === '/terminal') return null
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-14 items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-950/95 backdrop-blur supports-[backdrop-filter]:bg-zinc-950/80">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex h-14 items-center justify-between gap-4">
+
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+          <Link href="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
             <TrendingUp className="h-5 w-5 text-emerald-500" />
             <span className="text-white">
               IN<span className="text-emerald-500">big</span>
             </span>
-            <span className="text-muted-foreground font-normal text-sm hidden sm:block">
-              Finanzas
-            </span>
+            <span className="text-zinc-500 font-normal text-sm hidden sm:block">Finanzas</span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5 flex-1">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
@@ -46,31 +46,50 @@ export function Navbar() {
                   'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                   pathname === item.href || pathname?.startsWith(item.href + '/')
                     ? 'bg-emerald-500/10 text-emerald-400'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                 )}
               >
                 {item.label}
               </Link>
             ))}
+
+            <div className="w-px h-4 bg-zinc-800 mx-1" />
+
+            {/* Terminal — destacado */}
+            <Link
+              href="/terminal"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              <Zap className="h-3.5 w-3.5 text-emerald-500" />
+              Terminal
+              <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-700/40 px-1.5 py-0.5 rounded-full">
+                PRO
+              </span>
+            </Link>
           </nav>
 
-          {/* Right: Auth buttons */}
-          <div className="flex items-center gap-2">
+          {/* Right */}
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/planes"
+              className="hidden md:block text-xs text-zinc-400 hover:text-zinc-200 transition-colors px-2 py-1.5"
+            >
+              Planes
+            </Link>
             <Link
               href="/login"
-              className="hidden sm:block text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5"
+              className="hidden sm:block text-sm text-zinc-400 hover:text-white transition-colors px-3 py-1.5"
             >
               Ingresar
             </Link>
             <Link
-              href="/registro"
-              className="hidden sm:block text-sm bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-3 py-1.5 rounded-md transition-colors"
+              href="/register"
+              className="text-sm bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-1.5 rounded-lg transition-colors"
             >
-              Empezar gratis
+              Gratis →
             </Link>
-            {/* Mobile toggle */}
             <button
-              className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
+              className="lg:hidden p-2 text-zinc-400 hover:text-white"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
@@ -81,28 +100,43 @@ export function Navbar() {
 
         {/* Mobile nav */}
         {mobileOpen && (
-          <nav className="lg:hidden border-t border-border/40 py-3 flex flex-col gap-1">
+          <nav className="lg:hidden border-t border-zinc-800 py-3 flex flex-col gap-1">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                  'px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
                   pathname === item.href
                     ? 'bg-emerald-500/10 text-emerald-400'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                 )}
               >
                 {item.label}
               </Link>
             ))}
-            <div className="border-t border-border/40 pt-3 mt-2 flex gap-2">
-              <Link href="/login" className="flex-1 text-center text-sm border border-border rounded-md px-3 py-2 text-muted-foreground hover:text-foreground">
+            <Link
+              href="/terminal"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-emerald-400 hover:bg-zinc-800 transition-colors"
+            >
+              <Zap className="h-4 w-4" />
+              Terminal Pro
+            </Link>
+            <Link
+              href="/planes"
+              onClick={() => setMobileOpen(false)}
+              className="px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              Ver planes
+            </Link>
+            <div className="border-t border-zinc-800 pt-3 mt-2 flex gap-2">
+              <Link href="/login" onClick={() => setMobileOpen(false)} className="flex-1 text-center text-sm border border-zinc-700 rounded-xl px-3 py-2 text-zinc-400 hover:text-white transition-colors">
                 Ingresar
               </Link>
-              <Link href="/registro" className="flex-1 text-center text-sm bg-emerald-500 hover:bg-emerald-600 text-white rounded-md px-3 py-2 font-medium">
-                Empezar gratis
+              <Link href="/register" onClick={() => setMobileOpen(false)} className="flex-1 text-center text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-3 py-2 font-semibold transition-colors">
+                Empezar gratis →
               </Link>
             </div>
           </nav>

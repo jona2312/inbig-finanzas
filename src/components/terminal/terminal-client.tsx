@@ -16,6 +16,11 @@ import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { CopilotBox } from '@/components/copilot/copilot-box'
 
+const CommunityFeedRealtime = dynamic(
+  () => import('./community-feed-realtime').then(m => ({ default: m.CommunityFeedRealtime })),
+  { ssr: false, loading: () => <div className="h-48 bg-zinc-900 rounded-xl animate-pulse" /> }
+)
+
 const WorldMarketsMap = dynamic(
   () => import('@/components/market/world-markets-map').then(m => ({ default: m.WorldMarketsMap })),
   { ssr: false, loading: () => <div className="h-48 bg-zinc-900 rounded-xl animate-pulse" /> }
@@ -51,17 +56,6 @@ const DEFAULT_WATCHLIST: WatchItem[] = [
   { symbol: 'ETHUSD', label: 'Ethereum'    },
   { symbol: 'XAUUSD', label: 'Oro'         },
   { symbol: 'UKOIL',  label: 'Brent'       },
-]
-
-// Feed social simulado — después vendrá de Supabase Realtime
-const COMMUNITY_FEED = [
-  { user: 'T***a', action: 'está viendo',  symbol: 'XAUUSD', time: 'hace 1min', flag: '🇦🇷' },
-  { user: 'M***o', action: 'graficó',      symbol: 'NVDA',   time: 'hace 3min', flag: '🇲🇽' },
-  { user: 'J***s', action: 'está viendo',  symbol: 'MELI',   time: 'hace 5min', flag: '🇧🇷' },
-  { user: 'C***a', action: 'graficó',      symbol: 'GGAL',   time: 'hace 7min', flag: '🇦🇷' },
-  { user: 'R***n', action: 'está viendo',  symbol: 'BTC',    time: 'hace 9min', flag: '🇨🇴' },
-  { user: 'P***a', action: 'alertó precio',symbol: 'SPY',    time: 'hace 12min',flag: '🇦🇷' },
-  { user: 'D***o', action: 'graficó',      symbol: 'TSLA',   time: 'hace 15min',flag: '🇵🇪' },
 ]
 
 // ─── TradingView Advanced Chart ───────────────────────────────────────────────
@@ -291,27 +285,18 @@ export function TerminalClient({ tier, userId, tradingPlan }: TerminalClientProp
             </div>
           )}
 
-          {/* Feed comunidad */}
+          {/* Feed comunidad — Supabase Realtime */}
           {activeTab === 'comunidad' && (
             <div>
               {isPro ? (
                 <div className="space-y-2">
-                  <p className="text-[10px] text-zinc-500 uppercase tracking-wider mb-3">Actividad reciente</p>
-                  {COMMUNITY_FEED.map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex items-start gap-2 p-2.5 bg-zinc-900 rounded-xl border border-zinc-800 cursor-pointer hover:border-zinc-600 transition-colors"
-                      onClick={() => setActiveSymbol(item.symbol)}
-                    >
-                      <span className="text-sm">{item.flag}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] text-zinc-300">
-                          <span className="font-semibold text-white">{item.user}</span> {item.action}{' '}
-                          <span className="font-mono text-emerald-400">{item.symbol}</span>
-                        </p>
-                        <p className="text-[10px] text-zinc-600">{item.time}</p>
-                      </div>
-                    </div>
+                  <CommunityFeedRealtime
+                    compact
+                    onSymbolClick={(sym) => setActiveSymbol(sym)}
+                  />
+                  {/* mantener compatibilidad con COMMUNITY_FEED vacío */}
+                  {false && [].map((item: never, i: number) => (
+                    <div key={i} />
                   ))}
                   <p className="text-[10px] text-zinc-600 text-center mt-3">
                     Feed en tiempo real · Supabase Realtime
