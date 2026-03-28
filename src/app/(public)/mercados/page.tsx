@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import { getBymaTop, getCedearsTop, getIndices, formatChangePercent, isPositive } from '@/services/fmp'
-import { TradingViewWidget } from '@/components/market/tradingview-widget'
+import { LightweightChart } from '@/components/market/lightweight-chart'
 import { ScreenerNLP } from '@/components/market/screener-nlp'
 import { MarketTable } from '@/components/market/market-table'
 
@@ -38,14 +37,16 @@ export default async function MercadosPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-6 space-y-8">
 
-        {/* Terminal TradingView */}
+        {/* Terminal — Lightweight Charts (FMP data, zinc-dark, candlestick + volumen) */}
         <section>
           <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-3">
             Terminal
           </h2>
-          <Suspense fallback={<div className="h-[500px] bg-zinc-900 rounded-xl animate-pulse" />}>
-            <TradingViewWidget symbol="BCBA:GGAL" height={500} />
-          </Suspense>
+          <LightweightChart
+            defaultSymbol="GGAL"
+            defaultTimeframe="3M"
+            height={480}
+          />
         </section>
 
         {/* Screener NLP */}
