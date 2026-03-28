@@ -8,6 +8,7 @@ import { MarketTable } from '@/components/market/market-table'
 import { CommoditiesWidget } from '@/components/market/commodities-widget'
 import { FearGreedWidget } from '@/components/market/fear-greed-widget'
 import { CopilotBox } from '@/components/copilot/copilot-box'
+import { SectorHeatmap } from '@/components/market/sector-heatmap'
 
 export const metadata: Metadata = { title: 'Mercados — INBIG Finanzas' }
 export const revalidate = 60
@@ -63,6 +64,14 @@ export default async function MercadosPage() {
                 Terminal
               </h2>
               <LightweightChart defaultSymbol="GGAL" defaultTimeframe="3M" height={440} />
+            </section>
+
+            {/* Mapa de calor por sectores */}
+            <section>
+              <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-3">
+                Mapa de calor — Sectores
+              </h2>
+              <SectorHeatmap />
             </section>
 
             {/* Screener NLP */}

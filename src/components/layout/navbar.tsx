@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { label: 'Divisas',  href: '/divisas'   },
   { label: 'Noticias', href: '/noticias'  },
   { label: 'Gráficos', href: '/grafico'   },
+  { label: '🔴 Sala',  href: '/sala'      },
 ]
 
 export function Navbar() {
