@@ -167,7 +167,7 @@ export function TradingSessionMap() {
           style={{ width: '100%', height: 'auto' }}
         >
           <Geographies geography={GEO_URL}>
-            {({ geographies }: { geographies: unknown[] }) =>
+            {({ geographies }: { geographies: any[] }) =>
               geographies.map(geo => {
                 const color = mounted ? getCountryColor(String(geo.id), activeSessions) : '#27272a'
                 const isActive = activeSessions.some(s => s.countries.includes(String(geo.id)))
