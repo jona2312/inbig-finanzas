@@ -53,8 +53,7 @@ const EMOTIONS = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 function PhaseTab({
-  _phase,
-  label,
+    label,
   active,
   completed,
   disabled,
