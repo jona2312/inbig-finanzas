@@ -14,6 +14,7 @@ import { getDollarRates, getTopCrypto } from '@/services/market'
 import { CopilotBox } from '@/components/copilot/copilot-box'
 import { ArticleCard } from '@/components/news/article-card'
 import { PolymarketWidget } from '@/components/market/polymarket-widget'
+import { LiveChannelPlayer } from '@/components/live/LiveChannelPlayer'
 import {
   TrendingUp, TrendingDown, Zap, Newspaper, BarChart2,
   ArrowRight, Radio, Clock
@@ -190,12 +191,14 @@ export default async function AlDiaPage() {
     getTopCrypto(6),
   ])
 
+  // Datos para las macropills
   const blue = dollar.find(d => d.nombre === 'Blue')
   const mep = dollar.find(d => d.nombre === 'MEP') ?? dollar.find(d => d.nombre === 'Bolsa')
   const oficial = dollar.find(d => d.nombre === 'Oficial')
   const btc = crypto[0]
   const eth = crypto[1]
 
+  // Brecha dólar blue vs oficial
   const brecha =
     blue?.venta && oficial?.venta
       ? (((blue.venta - oficial.venta) / oficial.venta) * 100)
@@ -288,6 +291,9 @@ export default async function AlDiaPage() {
 
           {/* ── Columna principal ── */}
           <div className="lg:col-span-2 space-y-6">
+
+            {/* Canal en vivo — Bloomberg / CNBC / INBIG */}
+            <LiveChannelPlayer />
 
             {/* Copiloto financiero IA */}
             <CopilotBox
@@ -420,7 +426,7 @@ export default async function AlDiaPage() {
               </div>
             </div>
 
-            {/* Polymarket */}
+            {/* Polymarket — predicciones LATAM */}
             <Suspense fallback={<div className="h-48 bg-zinc-900 border border-zinc-800 rounded-xl animate-pulse" />}>
               <PolymarketWidget />
             </Suspense>
