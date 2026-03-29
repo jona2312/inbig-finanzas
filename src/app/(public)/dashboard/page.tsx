@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { CockpitHome } from '@/components/cockpit/CockpitHome'
+import CockpitHome from '@/components/cockpit/CockpitHome'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
