@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Market Data Service — Dólar (DolarAPI) + Crypto (CoinGecko) + Merval
+// Market Data Service — Dólar (DolarAPI) + Crypto (CoinGecko) + US Markets (Yahoo)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface DollarRate {
@@ -77,6 +77,71 @@ export async function getTopCrypto(limit = 10): Promise<CryptoRate[]> {
       { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', price: 64200, change24h: 2.4, marketCap: 1260000000000, volume24h: 28000000000 },
       { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', price: 3100, change24h: 1.8, marketCap: 373000000000, volume24h: 14000000000 },
       { id: 'tether', symbol: 'USDT', name: 'Tether', price: 1.0, change24h: 0.01, marketCap: 106000000000, volume24h: 52000000000 },
+    ]
+  }
+}
+
+// ─── US Markets (Yahoo Finance — free, server-side) ───────────────────────────
+
+export interface USMarketQuote {
+  symbol: string       // ^GSPC, GC=F, AAPL…
+  label: string        // S&P 500, Oro, Apple…
+  price: number
+  change: number       // absolute
+  changePercent: number
+  currency: string
+}
+
+const US_SYMBOLS: Record<string, string> = {
+  '^GSPC':    'S&P 500',
+  '^NDX':     'Nasdaq 100',
+  'GC=F':     'Oro',
+  'CL=F':     'Petróleo',
+  'EURUSD=X': 'EUR/USD',
+  'AAPL':     'Apple',
+  'TSLA':     'Tesla',
+  'GOOGL':    'Google',
+  'NVDA':     'NVIDIA',
+}
+
+export async function getUSMarkets(
+  symbols: string[] = ['^GSPC', '^NDX', 'GC=F', 'CL=F', 'EURUSD=X']
+): Promise<USMarketQuote[]> {
+  try {
+    const joined = symbols.join(',')
+    const res = await fetch(
+      `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${joined}&fields=regularMarketPrice,regularMarketChange,regularMarketChangePercent,currency`,
+      {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        next: { revalidate: 120 }, // cache 2 min
+      }
+    )
+    if (!res.ok) throw new Error('Yahoo Finance error')
+    const json = await res.json()
+    const results = json?.quoteResponse?.result ?? []
+
+    return results.map((q: {
+      symbol: string
+      regularMarketPrice: number
+      regularMarketChange: number
+      regularMarketChangePercent: number
+      currency?: string
+    }) => ({
+      symbol: q.symbol,
+      label: US_SYMBOLS[q.symbol] ?? q.symbol,
+      price: q.regularMarketPrice,
+      change: q.regularMarketChange,
+      changePercent: q.regularMarketChangePercent,
+      currency: q.currency ?? 'USD',
+    }))
+  } catch {
+    // Fallback con datos ilustrativos
+    return [
+      { symbol: '^GSPC',    label: 'S&P 500',    price: 5210,   change: 18.5,  changePercent: 0.36,  currency: 'USD' },
+      { symbol: '^NDX',     label: 'Nasdaq 100',  price: 18140,  change: 92.0,  changePercent: 0.51,  currency: 'USD' },
+      { symbol: 'GC=F',     label: 'Oro',         price: 2340,   change: 12.0,  changePercent: 0.52,  currency: 'USD' },
+      { symbol: 'CL=F',     label: 'Petróleo',    price: 79.5,   change: -0.8,  changePercent: -1.02, currency: 'USD' },
+      { symbol: 'EURUSD=X', label: 'EUR/USD',     price: 1.0820, change: 0.002, changePercent: 0.19,  currency: 'USD' },
     ]
   }
 }
