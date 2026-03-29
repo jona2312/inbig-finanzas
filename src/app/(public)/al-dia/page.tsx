@@ -2,7 +2,7 @@
  * /al-dia — Home page de INBIG Finanzas
  *
  * Layout Bloomberg-style: ticker strip → hero → col principal + sidebar
- * Datos en tiempo real: dólar, crypto, briefings IA, noticias Supabase
+ * Datos en tiempo real: dólar, crypto, US markets, briefings IA, noticias Supabase
  * Revalidar cada 5 minutos (ISR)
  */
 
@@ -10,7 +10,8 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { getLatestArticles } from '@/services/articles'
-import { getDollarRates, getTopCrypto } from '@/services/market'
+import { getDollarRates, getTopCrypto, getUSMarkets } from '@/services/market'
+import type { USMarketQuote } from '@/services/market'
 import { CopilotBox } from '@/components/copilot/copilot-box'
 import { ArticleCard } from '@/components/news/article-card'
 import { PolymarketWidget } from '@/components/market/polymarket-widget'
@@ -48,22 +49,37 @@ function formatPrice(n: number | null | undefined, prefix = '') {
 function TickerStrip({
   dollar,
   crypto,
+  usMarkets,
 }: {
   dollar: { nombre: string; venta: number | null }[]
   crypto: { symbol: string; price: number; change24h: number }[]
+  usMarkets: USMarketQuote[]
 }) {
-  const items = [
-    ...dollar.slice(0, 4).map(d => ({
-      label: `USD ${d.nombre}`,
-      value: formatPrice(d.venta, '$'),
-      change: null as number | null,
-    })),
-    ...crypto.slice(0, 3).map(c => ({
-      label: c.symbol,
-      value: `$${c.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
-      change: c.change24h,
-    })),
-  ]
+  const dollarItems = dollar.slice(0, 3).map(d => ({
+    label: `USD ${d.nombre}`,
+    value: formatPrice(d.venta, '$'),
+    change: null as number | null,
+  }))
+
+  const cryptoItems = crypto.slice(0, 2).map(c => ({
+    label: c.symbol,
+    value: `$${c.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
+    change: c.change24h,
+  }))
+
+  const usItems = usMarkets.map(m => {
+    const isForex = m.symbol === 'EURUSD=X'
+    const decimals = isForex ? 4 : m.price > 1000 ? 0 : 2
+    return {
+      label: m.label,
+      value: isForex
+        ? m.price.toFixed(4)
+        : `$${m.price.toLocaleString('en-US', { maximumFractionDigits: decimals })}`,
+      change: m.changePercent,
+    }
+  })
+
+  const items = [...dollarItems, ...usItems, ...cryptoItems]
 
   return (
     <div className="bg-zinc-950 border-b border-zinc-800 overflow-hidden">
@@ -180,6 +196,7 @@ export default async function AlDiaPage() {
     latest,
     dollar,
     crypto,
+    usMarkets,
   ] = await Promise.all([
     supabase
       .from('briefings')
@@ -189,16 +206,15 @@ export default async function AlDiaPage() {
     getLatestArticles(18),
     getDollarRates(),
     getTopCrypto(6),
+    getUSMarkets(['^GSPC', '^NDX', 'GC=F', 'CL=F', 'EURUSD=X']),
   ])
 
-  // Datos para las macropills
   const blue = dollar.find(d => d.nombre === 'Blue')
   const mep = dollar.find(d => d.nombre === 'MEP') ?? dollar.find(d => d.nombre === 'Bolsa')
   const oficial = dollar.find(d => d.nombre === 'Oficial')
   const btc = crypto[0]
   const eth = crypto[1]
 
-  // Brecha dólar blue vs oficial
   const brecha =
     blue?.venta && oficial?.venta
       ? (((blue.venta - oficial.venta) / oficial.venta) * 100)
@@ -218,7 +234,7 @@ export default async function AlDiaPage() {
     <div className="min-h-screen bg-zinc-950">
 
       {/* ── Ticker strip ── */}
-      <TickerStrip dollar={dollar} crypto={crypto} />
+      <TickerStrip dollar={dollar} crypto={crypto} usMarkets={usMarkets} />
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
@@ -243,48 +259,40 @@ export default async function AlDiaPage() {
           </div>
         </div>
 
-        {/* ── Macro pills ── */}
+        {/* ── Macro pills — LATAM (dólar + crypto) ── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {blue && (
-            <MacroCard
-              label="Dólar Blue"
-              value={formatPrice(blue.venta, '$')}
-              sub="venta"
-              accent
-            />
+            <MacroCard label="Dólar Blue" value={formatPrice(blue.venta, '$')} sub="venta" accent />
           )}
           {mep && (
-            <MacroCard
-              label="Dólar MEP"
-              value={formatPrice(mep.venta, '$')}
-              sub="venta"
-            />
+            <MacroCard label="Dólar MEP" value={formatPrice(mep.venta, '$')} sub="venta" />
           )}
           {brecha != null && (
-            <MacroCard
-              label="Brecha Blue/Oficial"
-              value={`${brecha.toFixed(1)}%`}
-              sub="vs oficial"
-              change={brecha}
-            />
+            <MacroCard label="Brecha Blue/Oficial" value={`${brecha.toFixed(1)}%`} sub="vs oficial" change={brecha} />
           )}
           {btc && (
-            <MacroCard
-              label="Bitcoin"
-              value={`$${btc.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
-              change={btc.change24h}
-              sub="24h"
-            />
+            <MacroCard label="Bitcoin" value={`$${btc.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`} change={btc.change24h} sub="24h" />
           )}
           {eth && (
-            <MacroCard
-              label="Ethereum"
-              value={`$${eth.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
-              change={eth.change24h}
-              sub="24h"
-            />
+            <MacroCard label="Ethereum" value={`$${eth.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`} change={eth.change24h} sub="24h" />
           )}
         </div>
+
+        {/* ── Macro pills — US Markets ── */}
+        {usMarkets.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {usMarkets.map(m => {
+              const isForex = m.symbol === 'EURUSD=X'
+              const decimals = isForex ? 4 : m.price > 1000 ? 0 : 2
+              const formatted = isForex
+                ? m.price.toFixed(4)
+                : `$${m.price.toLocaleString('en-US', { maximumFractionDigits: decimals })}`
+              return (
+                <MacroCard key={m.symbol} label={m.label} value={formatted} change={m.changePercent} sub="24h" />
+              )
+            })}
+          </div>
+        )}
 
         {/* ── Main grid ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -349,10 +357,7 @@ export default async function AlDiaPage() {
                   <Newspaper className="w-4 h-4 text-zinc-400" />
                   <h2 className="text-sm font-semibold text-white">Últimas noticias</h2>
                 </div>
-                <a
-                  href="/noticias"
-                  className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
-                >
+                <a href="/noticias" className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors">
                   Ver todas <ArrowRight className="w-3 h-3" />
                 </a>
               </div>
@@ -377,9 +382,7 @@ export default async function AlDiaPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-white">Tipos de dólar</h3>
-                <a href="/divisas" className="text-xs text-amber-400 hover:underline">
-                  Ver análisis →
-                </a>
+                <a href="/divisas" className="text-xs text-amber-400 hover:underline">Ver análisis →</a>
               </div>
               <div className="divide-y divide-zinc-800">
                 {dollar.slice(0, 7).map(d => (
@@ -402,9 +405,7 @@ export default async function AlDiaPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-white">Crypto</h3>
-                <a href="/crypto" className="text-xs text-amber-400 hover:underline">
-                  Ver más →
-                </a>
+                <a href="/crypto" className="text-xs text-amber-400 hover:underline">Ver más →</a>
               </div>
               <div className="divide-y divide-zinc-800">
                 {crypto.slice(0, 6).map(c => (
@@ -426,16 +427,14 @@ export default async function AlDiaPage() {
               </div>
             </div>
 
-            {/* Polymarket — predicciones LATAM */}
+            {/* Polymarket */}
             <Suspense fallback={<div className="h-48 bg-zinc-900 border border-zinc-800 rounded-xl animate-pulse" />}>
               <PolymarketWidget />
             </Suspense>
 
             {/* Navegación rápida */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-              <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
-                Explorar
-              </h3>
+              <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Explorar</h3>
               <div className="space-y-1.5">
                 <CategoryPill label="Mercados" href="/mercados" color="text-orange-400" />
                 <CategoryPill label="Crypto" href="/crypto" color="text-yellow-400" />
@@ -455,10 +454,7 @@ export default async function AlDiaPage() {
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Copiloto IA completo, fuentes en tiempo real, alertas de mercado y análisis profundo para inversores LATAM.
               </p>
-              <a
-                href="/planes"
-                className="inline-block mt-3 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 px-4 py-2 rounded-lg transition-colors w-full text-center"
-              >
+              <a href="/planes" className="inline-block mt-3 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 px-4 py-2 rounded-lg transition-colors w-full text-center">
                 Ver planes
               </a>
             </div>
