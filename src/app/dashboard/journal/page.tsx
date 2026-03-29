@@ -223,7 +223,3 @@ export default function JournalPage() {
     </div>
   )
 }
-
-export const metadata = {
-  title: 'Diario del Trader | INbig',
-}
