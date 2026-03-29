@@ -31,7 +31,8 @@ export default async function DashboardPage() {
   ])
 
   const profile = profileRes.data as { full_name: string | null; tier: string } | null
-  const plan    = planRes.data    as Record<string, unknown> | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const plan = planRes.data as any
 
   // If no plan yet → conversational onboarding
   if (!plan) {
@@ -53,7 +54,7 @@ export default async function DashboardPage() {
   // Plan exists → render personalized dashboard
   return (
     <PersonalDashboard
-      plan={plan as Parameters<typeof PersonalDashboard>[0]['plan']}
+      plan={plan}
       userName={profile?.full_name ?? null}
     />
   )
