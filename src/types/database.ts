@@ -546,7 +546,7 @@ export type Database = {
           id?: string
           max_loss_usd?: number | null
           max_trades?: number | null
-          mood?: number | null
+  2       mood?: number | null
           notes?: string | null
           trading_today?: boolean | null
           user_id: string
@@ -1952,3 +1952,14 @@ export type UsersUpdate = Database["public"]["Tables"]["users"]["Update"]
 export type UserUpdate = Database["public"]["Tables"]["users"]["Update"]
 export type WatchlistUpdate = Database["public"]["Tables"]["watchlist"]["Update"]
 
+
+// ============================================================
+// Enum type aliases
+// ============================================================
+export type AffiliateStatus = Database["public"]["Enums"]["affiliate_status"]
+export type AlertCondition = Database["public"]["Enums"]["alert_condition"]
+export type ArticleCategory = Database["public"]["Enums"]["article_category"]
+export type CourseStatus = Database["public"]["Enums"]["course_status"]
+export type EnrollmentStatus = Database["public"]["Enums"]["enrollment_status"]
+export type PayoutStatus = Database["public"]["Enums"]["payout_status"]
+export type UserTier = Database["public"]["Enums"]["user_tier"]
