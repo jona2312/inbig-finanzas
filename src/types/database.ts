@@ -1,8 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// INbig Finanzas — Database Types (auto-generado desde Supabase MCP)
-// No editar manualmente — regenerar con: supabase gen types typescript
-// ─────────────────────────────────────────────────────────────────────────────
-
 export type Json =
   | string
   | number
@@ -12,6 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.4"
   }
@@ -31,7 +28,7 @@ export type Database = {
           period_end: string
           period_start: string
           referral_count: number
-          status: string
+          status: Database["public"]["Enums"]["payout_status"]
         }
         Insert: {
           affiliate_id: string
@@ -46,7 +43,7 @@ export type Database = {
           period_end: string
           period_start: string
           referral_count?: number
-          status?: string
+          status?: Database["public"]["Enums"]["payout_status"]
         }
         Update: {
           affiliate_id?: string
@@ -61,9 +58,181 @@ export type Database = {
           period_end?: string
           period_start?: string
           referral_count?: number
-          status?: string
+          status?: Database["public"]["Enums"]["payout_status"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_payouts_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_referrals: {
+        Row: {
+          affiliate_id: string
+          amount: number
+          commission_amount: number
+          commission_percent: number
+          converted_at: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          referred_user_id: string | null
+          source: string | null
+          subscription_id: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          amount: number
+          commission_amount: number
+          commission_percent: number
+          converted_at?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          referred_user_id?: string | null
+          source?: string | null
+          subscription_id?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          amount?: number
+          commission_amount?: number
+          commission_percent?: number
+          converted_at?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          referred_user_id?: string | null
+          source?: string | null
+          subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_referrals_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_referrals_referred_user_id_fkey"
+            columns: ["referred_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_referrals_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliates: {
+        Row: {
+          approved_at: string | null
+          commission_tier: number
+          created_at: string
+          id: string
+          notes: string | null
+          payment_details: Json | null
+          payment_method: string | null
+          referral_code: string
+          status: Database["public"]["Enums"]["affiliate_status"]
+          total_earned: number
+          total_sales: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          commission_tier?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          payment_details?: Json | null
+          payment_method?: string | null
+          referral_code: string
+          status?: Database["public"]["Enums"]["affiliate_status"]
+          total_earned?: number
+          total_sales?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          commission_tier?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          payment_details?: Json | null
+          payment_method?: string | null
+          referral_code?: string
+          status?: Database["public"]["Enums"]["affiliate_status"]
+          total_earned?: number
+          total_sales?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliates_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alerts: {
+        Row: {
+          active: boolean | null
+          condition: Database["public"]["Enums"]["alert_condition"]
+          created_at: string
+          id: string
+          symbol: string
+          trigger_value: number
+          triggered_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          condition: Database["public"]["Enums"]["alert_condition"]
+          created_at?: string
+          id?: string
+          symbol: string
+          trigger_value: number
+          triggered_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          condition?: Database["public"]["Enums"]["alert_condition"]
+          created_at?: string
+          id?: string
+          symbol?: string
+          trigger_value?: number
+          triggered_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       articles: {
         Row: {
@@ -128,6 +297,84 @@ export type Database = {
         }
         Relationships: []
       }
+      assistant_usage: {
+        Row: {
+          answer: string | null
+          button_type: string | null
+          context: string
+          created_at: string | null
+          id: string
+          model_used: string | null
+          query: string | null
+          response_time_ms: number | null
+          session_id: string | null
+          sources: Json | null
+          tier: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          answer?: string | null
+          button_type?: string | null
+          context?: string
+          created_at?: string | null
+          id?: string
+          model_used?: string | null
+          query?: string | null
+          response_time_ms?: number | null
+          session_id?: string | null
+          sources?: Json | null
+          tier?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          answer?: string | null
+          button_type?: string | null
+          context?: string
+          created_at?: string | null
+          id?: string
+          model_used?: string | null
+          query?: string | null
+          response_time_ms?: number | null
+          session_id?: string | null
+          sources?: Json | null
+          tier?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       briefings: {
         Row: {
           agenda: Json | null
@@ -173,6 +420,338 @@ export type Database = {
         }
         Relationships: []
       }
+      copilot_memory: {
+        Row: {
+          confidence: number | null
+          content: string
+          created_at: string
+          data: Json | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          memory_type: string
+          source: string | null
+          source_id: string | null
+          user_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          content: string
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          memory_type: string
+          source?: string | null
+          source_id?: string | null
+          user_id: string
+        }
+        Update: {
+          confidence?: number | null
+          content?: string
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          memory_type?: string
+          source?: string | null
+          source_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "copilot_memory_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_hours: number | null
+          id: string
+          instructor: string | null
+          min_tier: Database["public"]["Enums"]["user_tier"]
+          slug: string
+          sort_order: number | null
+          status: Database["public"]["Enums"]["course_status"]
+          tags: Json | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          id?: string
+          instructor?: string | null
+          min_tier?: Database["public"]["Enums"]["user_tier"]
+          slug: string
+          sort_order?: number | null
+          status?: Database["public"]["Enums"]["course_status"]
+          tags?: Json | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          id?: string
+          instructor?: string | null
+          min_tier?: Database["public"]["Enums"]["user_tier"]
+          slug?: string
+          sort_order?: number | null
+          status?: Database["public"]["Enums"]["course_status"]
+          tags?: Json | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      daily_checkins: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          daily_goal: string | null
+          date: string
+          end_of_day_notes: string | null
+          focus_level: number | null
+          followed_plan: boolean | null
+          id: string
+          max_loss_usd: number | null
+          max_trades: number | null
+          mood: number | null
+          notes: string | null
+          trading_today: boolean | null
+          user_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          daily_goal?: string | null
+          date?: string
+          end_of_day_notes?: string | null
+          focus_level?: number | null
+          followed_plan?: boolean | null
+          id?: string
+          max_loss_usd?: number | null
+          max_trades?: number | null
+          mood?: number | null
+          notes?: string | null
+          trading_today?: boolean | null
+          user_id: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          daily_goal?: string | null
+          date?: string
+          end_of_day_notes?: string | null
+          focus_level?: number | null
+          followed_plan?: boolean | null
+          id?: string
+          max_loss_usd?: number | null
+          max_trades?: number | null
+          mood?: number | null
+          notes?: string | null
+          trading_today?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_checkins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enrollments: {
+        Row: {
+          completed_at: string | null
+          course_id: string
+          id: string
+          progress: number | null
+          started_at: string
+          status: Database["public"]["Enums"]["enrollment_status"]
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          course_id: string
+          id?: string
+          progress?: number | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["enrollment_status"]
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          course_id?: string
+          id?: string
+          progress?: number | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["enrollment_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          message: string
+          type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message: string
+          type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string
+          type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_progress: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          last_position_seconds: number | null
+          lesson_id: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          last_position_seconds?: number | null
+          lesson_id: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          last_position_seconds?: number | null
+          lesson_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          content: string | null
+          course_id: string
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          is_free: boolean | null
+          slug: string
+          sort_order: number | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          content?: string | null
+          course_id: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          is_free?: boolean | null
+          slug: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: string | null
+          course_id?: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          is_free?: boolean | null
+          slug?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       live_config: {
         Row: {
           active_session_id: string | null
@@ -198,7 +777,15 @@ export type Database = {
           live_mode?: boolean
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "live_config_active_session_id_fkey"
+            columns: ["active_session_id"]
+            isOneToOne: false
+            referencedRelation: "live_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       live_sessions: {
         Row: {
@@ -249,7 +836,15 @@ export type Database = {
           titulo?: string
           viewers_peak?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "live_sessions_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "live_sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       live_sources: {
         Row: {
@@ -295,6 +890,206 @@ export type Database = {
           youtube_channel_id?: string | null
         }
         Relationships: []
+      }
+      market_activity: {
+        Row: {
+          action: string
+          country: string
+          created_at: string
+          flag: string
+          id: string
+          symbol: string
+          user_hash: string | null
+        }
+        Insert: {
+          action?: string
+          country?: string
+          created_at?: string
+          flag?: string
+          id?: string
+          symbol: string
+          user_hash?: string | null
+        }
+        Update: {
+          action?: string
+          country?: string
+          created_at?: string
+          flag?: string
+          id?: string
+          symbol?: string
+          user_hash?: string | null
+        }
+        Relationships: []
+      }
+      market_cache: {
+        Row: {
+          change: number | null
+          change_percent: number | null
+          data: Json | null
+          id: string
+          last_updated: string
+          price: number | null
+          symbol: string
+          updated_at: string | null
+          volume: number | null
+        }
+        Insert: {
+          change?: number | null
+          change_percent?: number | null
+          data?: Json | null
+          id?: string
+          last_updated?: string
+          price?: number | null
+          symbol: string
+          updated_at?: string | null
+          volume?: number | null
+        }
+        Update: {
+          change?: number | null
+          change_percent?: number | null
+          data?: Json | null
+          id?: string
+          last_updated?: string
+          price?: number | null
+          symbol?: string
+          updated_at?: string | null
+          volume?: number | null
+        }
+        Relationships: []
+      }
+      portfolio: {
+        Row: {
+          buy_date: string
+          buy_price: number
+          created_at: string
+          id: string
+          notes: string | null
+          quantity: number
+          symbol: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          buy_date: string
+          buy_price: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          quantity: number
+          symbol: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          buy_date?: string
+          buy_price?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          quantity?: number
+          symbol?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scenario_sessions: {
+        Row: {
+          asset_type: string | null
+          copilot_questions: Json | null
+          created_at: string
+          current_price: number | null
+          direction: string | null
+          educational_note: string | null
+          expires_at: string | null
+          id: string
+          linked_trade_id: string | null
+          macro_events: Json | null
+          outcome_notes: string | null
+          risk_size: number | null
+          scenario_base: Json | null
+          scenario_bear: Json | null
+          scenario_bull: Json | null
+          status: string | null
+          symbol: string
+          technical_bias: string | null
+          timeframe: string | null
+          updated_at: string
+          user_id: string
+          volatility_note: string | null
+        }
+        Insert: {
+          asset_type?: string | null
+          copilot_questions?: Json | null
+          created_at?: string
+          current_price?: number | null
+          direction?: string | null
+          educational_note?: string | null
+          expires_at?: string | null
+          id?: string
+          linked_trade_id?: string | null
+          macro_events?: Json | null
+          outcome_notes?: string | null
+          risk_size?: number | null
+          scenario_base?: Json | null
+          scenario_bear?: Json | null
+          scenario_bull?: Json | null
+          status?: string | null
+          symbol: string
+          technical_bias?: string | null
+          timeframe?: string | null
+          updated_at?: string
+          user_id: string
+          volatility_note?: string | null
+        }
+        Update: {
+          asset_type?: string | null
+          copilot_questions?: Json | null
+          created_at?: string
+          current_price?: number | null
+          direction?: string | null
+          educational_note?: string | null
+          expires_at?: string | null
+          id?: string
+          linked_trade_id?: string | null
+          macro_events?: Json | null
+          outcome_notes?: string | null
+          risk_size?: number | null
+          scenario_base?: Json | null
+          scenario_bear?: Json | null
+          scenario_bull?: Json | null
+          status?: string | null
+          symbol?: string
+          technical_bias?: string | null
+          timeframe?: string | null
+          updated_at?: string
+          user_id?: string
+          volatility_note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scenario_sessions_linked_trade_id_fkey"
+            columns: ["linked_trade_id"]
+            isOneToOne: false
+            referencedRelation: "trade_journal"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scenario_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -345,7 +1140,310 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trade_journal: {
+        Row: {
+          asset_type: string | null
+          closed_at: string | null
+          created_at: string
+          direction: string | null
+          emotion_after: string | null
+          emotion_before: string | null
+          emotion_during: string | null
+          entry_price: number | null
+          entry_reason: string | null
+          exit_price: number | null
+          exit_reason: string | null
+          followed_plan: boolean | null
+          id: string
+          lesson: string | null
+          leverage: number | null
+          lot_size: number | null
+          macro_context: Json | null
+          opened_at: string
+          outcome: string | null
+          pnl: number | null
+          pnl_pct: number | null
+          risk_reward: number | null
+          screenshot_url: string | null
+          session: string | null
+          status: string | null
+          stop_loss: number | null
+          strategy: string | null
+          symbol: string
+          tags: string[] | null
+          take_profit: number | null
+          timeframe: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          asset_type?: string | null
+          closed_at?: string | null
+          created_at?: string
+          direction?: string | null
+          emotion_after?: string | null
+          emotion_before?: string | null
+          emotion_during?: string | null
+          entry_price?: number | null
+          entry_reason?: string | null
+          exit_price?: number | null
+          exit_reason?: string | null
+          followed_plan?: boolean | null
+          id?: string
+          lesson?: string | null
+          leverage?: number | null
+          lot_size?: number | null
+          macro_context?: Json | null
+          opened_at?: string
+          outcome?: string | null
+          pnl?: number | null
+          pnl_pct?: number | null
+          risk_reward?: number | null
+          screenshot_url?: string | null
+          session?: string | null
+          status?: string | null
+          stop_loss?: number | null
+          strategy?: string | null
+          symbol: string
+          tags?: string[] | null
+          take_profit?: number | null
+          timeframe?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          asset_type?: string | null
+          closed_at?: string | null
+          created_at?: string
+          direction?: string | null
+          emotion_after?: string | null
+          emotion_before?: string | null
+          emotion_during?: string | null
+          entry_price?: number | null
+          entry_reason?: string | null
+          exit_price?: number | null
+          exit_reason?: string | null
+          followed_plan?: boolean | null
+          id?: string
+          lesson?: string | null
+          leverage?: number | null
+          lot_size?: number | null
+          macro_context?: Json | null
+          opened_at?: string
+          outcome?: string | null
+          pnl?: number | null
+          pnl_pct?: number | null
+          risk_reward?: number | null
+          screenshot_url?: string | null
+          session?: string | null
+          status?: string | null
+          stop_loss?: number | null
+          strategy?: string | null
+          symbol?: string
+          tags?: string[] | null
+          take_profit?: number | null
+          timeframe?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_journal_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trader_profile: {
+        Row: {
+          avg_pnl: number | null
+          avg_rr: number | null
+          best_assets: string[] | null
+          consecutive_losses: number | null
+          copilot_notes: string | null
+          created_at: string
+          detected_patterns: Json | null
+          id: string
+          last_analysis_at: string | null
+          max_drawdown_streak: number | null
+          preferred_session: string | null
+          preferred_strategy: string | null
+          preferred_timeframe: string | null
+          strong_points: string[] | null
+          total_trades: number | null
+          updated_at: string
+          user_id: string
+          weak_points: string[] | null
+          win_rate: number | null
+        }
+        Insert: {
+          avg_pnl?: number | null
+          avg_rr?: number | null
+          best_assets?: string[] | null
+          consecutive_losses?: number | null
+          copilot_notes?: string | null
+          created_at?: string
+          detected_patterns?: Json | null
+          id?: string
+          last_analysis_at?: string | null
+          max_drawdown_streak?: number | null
+          preferred_session?: string | null
+          preferred_strategy?: string | null
+          preferred_timeframe?: string | null
+          strong_points?: string[] | null
+          total_trades?: number | null
+          updated_at?: string
+          user_id: string
+          weak_points?: string[] | null
+          win_rate?: number | null
+        }
+        Update: {
+          avg_pnl?: number | null
+          avg_rr?: number | null
+          best_assets?: string[] | null
+          consecutive_losses?: number | null
+          copilot_notes?: string | null
+          created_at?: string
+          detected_patterns?: Json | null
+          id?: string
+          last_analysis_at?: string | null
+          max_drawdown_streak?: number | null
+          preferred_session?: string | null
+          preferred_strategy?: string | null
+          preferred_timeframe?: string | null
+          strong_points?: string[] | null
+          total_trades?: number | null
+          updated_at?: string
+          user_id?: string
+          weak_points?: string[] | null
+          win_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trader_profile_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trading_plans: {
+        Row: {
+          assets: Json | null
+          created_at: string
+          generated: boolean | null
+          id: string
+          info_needs: string[] | null
+          markets: string[] | null
+          notes: string | null
+          risk_profile: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assets?: Json | null
+          created_at?: string
+          generated?: boolean | null
+          id?: string
+          info_needs?: string[] | null
+          markets?: string[] | null
+          notes?: string | null
+          risk_profile?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assets?: Json | null
+          created_at?: string
+          generated?: boolean | null
+          id?: string
+          info_needs?: string[] | null
+          markets?: string[] | null
+          notes?: string | null
+          risk_profile?: string | null
+          updated_at?: string
+          user_id?: string
+        }
         Relationships: []
+      }
+      user_briefings: {
+        Row: {
+          activos_clave: Json | null
+          alertas: Json | null
+          briefing_id: string | null
+          copilot_message: string | null
+          created_at: string
+          date: string
+          id: string
+          read_at: string | null
+          resumen: string | null
+          sent_at: string | null
+          session: string | null
+          tipo: string | null
+          titulo: string
+          user_id: string
+        }
+        Insert: {
+          activos_clave?: Json | null
+          alertas?: Json | null
+          briefing_id?: string | null
+          copilot_message?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          read_at?: string | null
+          resumen?: string | null
+          sent_at?: string | null
+          session?: string | null
+          tipo?: string | null
+          titulo: string
+          user_id: string
+        }
+        Update: {
+          activos_clave?: Json | null
+          alertas?: Json | null
+          briefing_id?: string | null
+          copilot_message?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          read_at?: string | null
+          resumen?: string | null
+          sent_at?: string | null
+          session?: string | null
+          tipo?: string | null
+          titulo?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_briefings_briefing_id_fkey"
+            columns: ["briefing_id"]
+            isOneToOne: false
+            referencedRelation: "briefings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_briefings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_events: {
         Row: {
@@ -377,6 +1475,48 @@ export type Database = {
           referrer?: string | null
           session_id?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          default_symbol: string | null
+          id: string
+          language: string | null
+          notifications: Json | null
+          sidebar_tabs: string[] | null
+          terminal_layout: string | null
+          theme: string | null
+          timezone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_symbol?: string | null
+          id?: string
+          language?: string | null
+          notifications?: Json | null
+          sidebar_tabs?: string[] | null
+          terminal_layout?: string | null
+          theme?: string | null
+          timezone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          default_symbol?: string | null
+          id?: string
+          language?: string | null
+          notifications?: Json | null
+          sidebar_tabs?: string[] | null
+          terminal_layout?: string | null
+          theme?: string | null
+          timezone?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -446,6 +1586,41 @@ export type Database = {
         }
         Relationships: []
       }
+      watchlist: {
+        Row: {
+          added_at: string
+          asset_type: string | null
+          id: string
+          name: string | null
+          symbol: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          asset_type?: string | null
+          id?: string
+          name?: string | null
+          symbol: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          asset_type?: string | null
+          id?: string
+          name?: string | null
+          symbol?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watchlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -454,6 +1629,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      affiliate_status: "pending" | "active" | "suspended" | "inactive"
+      alert_condition: "above" | "below"
       article_category:
         | "macro"
         | "mercados"
@@ -462,6 +1639,9 @@ export type Database = {
         | "divisas"
         | "argentina"
         | "opinion"
+      course_status: "draft" | "published" | "archived"
+      enrollment_status: "active" | "completed" | "cancelled"
+      payout_status: "pending" | "approved" | "paid" | "rejected"
       user_tier: "lector" | "in_basic" | "in_pro" | "in_pro_plus"
     }
     CompositeTypes: {
@@ -471,23 +1651,140 @@ export type Database = {
 }
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
-export type Tables<T extends keyof DefaultSchema["Tables"]> =
-  DefaultSchema["Tables"][T]["Row"]
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
-export type Enums<T extends keyof DefaultSchema["Enums"]> =
-  DefaultSchema["Enums"][T]
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
-// Helpers de uso frecuente
-export type UserRow = Tables<"users">
-export type ArticleRow = Tables<"articles">
-export type BriefingRow = Tables<"briefings">
-export type UserEventRow = Tables<"user_events">
-export type SubscriptionRow = Tables<"subscriptions">
-export type LiveConfigRow = Tables<"live_config">
-export type UserTier = Enums<"user_tier">
-export type ArticleCategory = Enums<"article_category">
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
-// Alias de conveniencia para imports existentes
-export type Article = ArticleRow
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      affiliate_status: ["pending", "active", "suspended", "inactive"],
+      alert_condition: ["above", "below"],
+      article_category: [
+        "macro",
+        "mercados",
+        "empresas",
+        "crypto",
+        "divisas",
+        "argentina",
+        "opinion",
+      ],
+      course_status: ["draft", "published", "archived"],
+      enrollment_status: ["active", "completed", "cancelled"],
+      payout_status: ["pending", "approved", "paid", "rejected"],
+      user_tier: ["lector", "in_basic", "in_pro", "in_pro_plus"],
+    },
+  },
+} as const
