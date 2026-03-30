@@ -192,7 +192,7 @@ function YouTubePlayer({
             }
           },
           onError: (evt: { data: number }) => {
-            // 2=invalid id, 5=html5 error, 100=not found, 101/150=embed blocked
+            // 2=invalid id, 5=html5, 100=not found, 101/150=embed blocked
             console.warn('[LiveChannelPlayer] YT error', evt.data, 'for', channel.channel_key)
             handleError()
           },
@@ -247,7 +247,8 @@ export function LiveChannelPlayer() {
     async function fetchChannels() {
       try {
         const supabase = createClient()
-        const { data, error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data, error } = await (supabase as any)
           .from('live_channels')
           .select('channel_key, label, youtube_channel_url, current_video_id, embed_allowed, status, description, logo_url')
           .order('channel_key')
@@ -257,7 +258,7 @@ export function LiveChannelPlayer() {
           setActiveKey(DEFAULT_CHANNELS[0].channel_key)
         } else {
           setChannels(data as Channel[])
-          const liveChannel = data.find((c) => c.status === 'live')
+          const liveChannel = data.find((c: Channel) => c.status === 'live')
           setActiveKey((liveChannel ?? data[0]).channel_key)
         }
       } catch (err) {
