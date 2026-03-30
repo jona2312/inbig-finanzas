@@ -17,11 +17,16 @@ import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 import type { UserTier } from '@/types/database'
 
+// Prevent Next.js from trying to statically analyze this route at build time
+export const dynamic = 'force-dynamic'
+
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-02-25.clover',
-})
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2026-02-25.clover',
+  })
+}
 
 // Usamos service role key para writes admin (bypass RLS)
 function getAdminSupabase() {
@@ -54,7 +59,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET)
+    event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET)
   } catch (err) {
     console.error('[Stripe Webhook] Signature verification failed:', err)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
@@ -78,7 +83,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Obtener tier desde el subscription
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+        const subscription = await getStripe().subscriptions.retrieve(subscriptionId)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const subAny = subscription as any
         const priceId = subscription.items.data[0]?.price.id

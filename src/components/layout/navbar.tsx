@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { label: 'Divisas',  href: '/divisas'   },
   { label: 'Noticias', href: '/noticias'  },
   { label: 'Gráficos', href: '/grafico'   },
+  { label: '🔴 Sala',  href: '/sala'      },
 ]
 
 export function Navbar() {
@@ -29,9 +30,9 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
-            <TrendingUp className="h-5 w-5 text-emerald-500" />
+            <TrendingUp className="h-5 w-5 text-amber-500" />
             <span className="text-white">
-              IN<span className="text-emerald-500">big</span>
+              IN<span className="text-amber-500">big</span>
             </span>
             <span className="text-zinc-500 font-normal text-sm hidden sm:block">Finanzas</span>
           </Link>
@@ -45,7 +46,7 @@ export function Navbar() {
                 className={cn(
                   'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                   pathname === item.href || pathname?.startsWith(item.href + '/')
-                    ? 'bg-emerald-500/10 text-emerald-400'
+                    ? 'bg-amber-500/10 text-amber-400'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                 )}
               >
@@ -60,9 +61,9 @@ export function Navbar() {
               href="/terminal"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
             >
-              <Zap className="h-3.5 w-3.5 text-emerald-500" />
+              <Zap className="h-3.5 w-3.5 text-amber-500" />
               Terminal
-              <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-700/40 px-1.5 py-0.5 rounded-full">
+              <span className="text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-700/40 px-1.5 py-0.5 rounded-full">
                 PRO
               </span>
             </Link>
@@ -84,7 +85,7 @@ export function Navbar() {
             </Link>
             <Link
               href="/register"
-              className="text-sm bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-1.5 rounded-lg transition-colors"
+              className="text-sm bg-amber-600 hover:bg-amber-500 text-white font-semibold px-4 py-1.5 rounded-lg transition-colors"
             >
               Gratis →
             </Link>
@@ -109,7 +110,7 @@ export function Navbar() {
                 className={cn(
                   'px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
                   pathname === item.href
-                    ? 'bg-emerald-500/10 text-emerald-400'
+                    ? 'bg-amber-500/10 text-amber-400'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                 )}
               >
@@ -119,7 +120,7 @@ export function Navbar() {
             <Link
               href="/terminal"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-emerald-400 hover:bg-zinc-800 transition-colors"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-amber-400 hover:bg-zinc-800 transition-colors"
             >
               <Zap className="h-4 w-4" />
               Terminal Pro
@@ -135,7 +136,7 @@ export function Navbar() {
               <Link href="/login" onClick={() => setMobileOpen(false)} className="flex-1 text-center text-sm border border-zinc-700 rounded-xl px-3 py-2 text-zinc-400 hover:text-white transition-colors">
                 Ingresar
               </Link>
-              <Link href="/register" onClick={() => setMobileOpen(false)} className="flex-1 text-center text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-3 py-2 font-semibold transition-colors">
+              <Link href="/register" onClick={() => setMobileOpen(false)} className="flex-1 text-center text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-xl px-3 py-2 font-semibold transition-colors">
                 Empezar gratis →
               </Link>
             </div>
