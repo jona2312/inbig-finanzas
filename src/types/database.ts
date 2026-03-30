@@ -1963,3 +1963,5 @@ export type CourseStatus = Database["public"]["Enums"]["course_status"]
 export type EnrollmentStatus = Database["public"]["Enums"]["enrollment_status"]
 export type PayoutStatus = Database["public"]["Enums"]["payout_status"]
 export type UserTier = Database["public"]["Enums"]["user_tier"]
+
+export type Article = Database["public"]["Tables"]["articles"]["Row"]
