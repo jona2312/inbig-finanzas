@@ -98,6 +98,7 @@ function ChannelFallback({ channel }: { channel: Channel }) {
 
   return (
     <div className="flex flex-col items-center justify-center gap-4 px-4 py-8 min-h-[200px] bg-zinc-900">
+      {/* Logo / icon */}
       <div className="w-14 h-14 rounded-full bg-zinc-800 flex items-center justify-center text-2xl select-none">
         {channel.logo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -107,6 +108,7 @@ function ChannelFallback({ channel }: { channel: Channel }) {
         )}
       </div>
 
+      {/* Name + description */}
       <div className="text-center space-y-1">
         <p className="text-sm font-semibold text-zinc-200">{channel.label}</p>
         {channel.description && (
@@ -115,6 +117,7 @@ function ChannelFallback({ channel }: { channel: Channel }) {
         <p className="text-xs text-zinc-600 pt-1">{statusLabel}</p>
       </div>
 
+      {/* CTA */}
       {channel.youtube_channel_url && (
         <a
           href={channel.youtube_channel_url}
@@ -158,6 +161,7 @@ function YouTubePlayer({
   useEffect(() => {
     destroyed.current = false
 
+    // Pre-validation: skip iframe entirely if we already know it won't embed
     if (!channel.current_video_id || !channel.embed_allowed) {
       handleError()
       return
@@ -174,7 +178,7 @@ function YouTubePlayer({
         height: '100%',
         playerVars: {
           autoplay: 1,
-          mute: 1,
+          mute: 1,         // required for autoplay in most browsers
           controls: 1,
           modestbranding: 1,
           rel: 0,
@@ -186,13 +190,25 @@ function YouTubePlayer({
             if (!destroyed.current) setEmbedStatus('playing')
           },
           onStateChange: (evt: { data: number }) => {
+            // State -1 = unstarted (normal initial state), don't treat as error
+            // State  0 = ended — could reload or show fallback
             if (evt.data === 0 && !destroyed.current) {
+              // Video ended — show fallback (stream ended / no live content)
               setEmbedStatus('error')
               onError()
             }
           },
           onError: (evt: { data: number }) => {
-            // 2=invalid id, 5=html5, 100=not found, 101/150=embed blocked
+            /**
+             * YouTube error codes:
+             *   2   → invalid videoId parameter
+             *   5   → HTML5 player error
+             *  100  → video not found / private
+             *  101  → embed not allowed by owner
+             *  150  → embed not allowed (obfuscated 101)
+             *
+             * ALL of these → go straight to ChannelFallback, never show broken iframe.
+             */
             console.warn('[LiveChannelPlayer] YT error', evt.data, 'for', channel.channel_key)
             handleError()
           },
@@ -203,29 +219,40 @@ function YouTubePlayer({
     return () => {
       destroyed.current = true
       if (playerRef.current) {
-        try { playerRef.current.destroy() } catch { /* ignore */ }
+        try {
+          playerRef.current.destroy()
+        } catch {
+          // ignore destroy errors on unmount
+        }
         playerRef.current = null
       }
     }
+    // Re-mount only when videoId or embed_allowed changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channel.current_video_id, channel.embed_allowed, channel.channel_key])
 
+  // If we know upfront it won't embed, render fallback immediately
   if (!channel.current_video_id || !channel.embed_allowed) {
     return <ChannelFallback channel={channel} />
   }
 
   return (
     <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+      {/* Loading spinner — shown until onReady fires */}
       {embedStatus === 'loading' && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-900">
           <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
+
+      {/* Fallback overlay — shown on any YT error */}
       {embedStatus === 'error' && (
         <div className="absolute inset-0 z-20">
           <ChannelFallback channel={channel} />
         </div>
       )}
+
+      {/* IFrame mount point — hidden while error, visible otherwise */}
       <div
         ref={mountRef}
         className="w-full h-full"
@@ -258,6 +285,7 @@ export function LiveChannelPlayer() {
           setActiveKey(DEFAULT_CHANNELS[0].channel_key)
         } else {
           setChannels(data as Channel[])
+          // Prefer a live channel as default active
           const liveChannel = data.find((c: Channel) => c.status === 'live')
           setActiveKey((liveChannel ?? data[0]).channel_key)
         }
@@ -276,9 +304,10 @@ export function LiveChannelPlayer() {
   const activeChannel = channels.find((c) => c.channel_key === activeKey)
 
   const handleChannelError = useCallback((key: string) => {
-    setFallbackSet((prev) => new Set([...prev, key]))
+    setFallbackSet((prev) => { const s = new Set(prev); s.add(key); return s })
   }, [])
 
+  // ── Loading state
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[200px] bg-zinc-900 rounded-b-xl">
@@ -287,6 +316,7 @@ export function LiveChannelPlayer() {
     )
   }
 
+  // ── No channels at all
   if (!channels.length || !activeChannel) {
     return (
       <div className="flex items-center justify-center min-h-[200px] bg-zinc-900 rounded-b-xl text-xs text-zinc-600">
@@ -295,6 +325,10 @@ export function LiveChannelPlayer() {
     )
   }
 
+  // ── Whether the active channel should show fallback:
+  //    1. embed_allowed = false (DB flag, updated by n8n every 6h)
+  //    2. no current_video_id
+  //    3. player reported error (fallbackSet)
   const showFallback =
     !activeChannel.embed_allowed ||
     !activeChannel.current_video_id ||
@@ -302,6 +336,7 @@ export function LiveChannelPlayer() {
 
   return (
     <div className="bg-zinc-900 rounded-b-xl overflow-hidden">
+      {/* ── Channel tabs ── */}
       {channels.length > 1 && (
         <div className="flex overflow-x-auto border-b border-zinc-800 bg-zinc-950 scrollbar-none">
           {channels.map((ch) => {
@@ -311,11 +346,14 @@ export function LiveChannelPlayer() {
               <button
                 key={ch.channel_key}
                 onClick={() => setActiveKey(ch.channel_key)}
-                className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
-                  isActive
+                className={`
+                  flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap
+                  border-b-2 transition-colors
+                  ${isActive
                     ? 'text-white border-red-500 bg-zinc-900'
                     : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-zinc-900/50'
-                }`}
+                  }
+                `}
               >
                 {isLive && (
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
@@ -327,6 +365,7 @@ export function LiveChannelPlayer() {
         </div>
       )}
 
+      {/* ── Content area ── */}
       {showFallback ? (
         <ChannelFallback channel={activeChannel} />
       ) : (
