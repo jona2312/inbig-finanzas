@@ -546,7 +546,7 @@ export type Database = {
           id?: string
           max_loss_usd?: number | null
           max_trades?: number | null
-  2       mood?: number | null
+          mood?: number | null
           notes?: string | null
           trading_today?: boolean | null
           user_id: string
