@@ -5,6 +5,7 @@
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import UpgradeButton from '@/components/upgrade/upgrade-button'
 
 export const metadata: Metadata = {
   title: 'Planes — INBIG Finanzas',
@@ -180,12 +181,22 @@ export default function PlanesPage() {
               </div>
 
               {/* CTA */}
-              <Link
-                href={plan.href}
-                className={`block text-center text-sm font-semibold py-2.5 rounded-xl transition-colors mb-6 ${plan.btnStyle}`}
-              >
-                {plan.cta}
-              </Link>
+              <div className="mb-6">
+                {plan.id === 'lector' ? (
+                  <Link
+                    href="/register"
+                    className={`block text-center text-sm font-semibold py-2.5 rounded-xl transition-colors ${plan.btnStyle}`}
+                  >
+                    {plan.cta}
+                  </Link>
+                ) : (
+                  <UpgradeButton
+                    plan={plan.id as 'basic' | 'plus' | 'premium'}
+                    label={plan.cta}
+                    className={plan.btnStyle}
+                  />
+                )}
+              </div>
 
               {/* Features */}
               <ul className="space-y-2.5 flex-1">
