@@ -125,9 +125,22 @@ const FAQS = [
   },
 ]
 
-export default function PlanesPage() {
+export default function PlanesPage({
+  searchParams,
+}: {
+  searchParams?: { upgrade?: string }
+}) {
+  const upgradeRequired = searchParams?.upgrade === 'required'
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+
+      {/* Banner upgrade required */}
+      {upgradeRequired && (
+        <div className="bg-amber-500/10 border-b border-amber-500/30 text-amber-300 text-sm text-center px-6 py-3">
+          Necesitás un plan de pago para acceder al dashboard. Elegí tu plan abajo.
+        </div>
+      )}
 
       {/* Hero */}
       <div className="text-center px-6 pt-16 pb-12">
