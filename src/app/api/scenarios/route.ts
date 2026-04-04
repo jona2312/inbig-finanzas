@@ -7,7 +7,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
+}
 
 export async function GET() {
   const supabase = createClient()
@@ -100,7 +102,7 @@ REGLA DE COMPLIANCE: Nunca des recomendaciones de inversiÃÂ³n. Todo es anÃ
 
   let aiResult: Record<string, unknown> = {}
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }]
