@@ -12,7 +12,9 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
+}
 
 function buildSystemPrompt(plan: Record<string, unknown> | null): string {
   const base = `Eres INbot, el asistente financiero personalizado de INBIG Finanzas.
@@ -63,7 +65,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Messages requerido' }, { status: 400 })
     }
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model:      'gpt-4o-mini',
       max_tokens: 600,
       messages: [
