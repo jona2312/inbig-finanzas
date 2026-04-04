@@ -2,9 +2,9 @@ import OpenAI from 'openai'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
+}
 
 const SYSTEM_PROMPT = `Eres INbot, el asistente financiero de INbig Finanzas.
 Eres experto en mercados financieros de Latinoamérica (Argentina, Brasil, México, Chile, Colombia).
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Messages required' }, { status: 400 })
     }
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       max_tokens: 1024,
       messages: [
