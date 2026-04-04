@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
+}
 
 const SYSTEM_PROMPT = `Eres el Copilot de INbig Finanzas, asistente especializado en trading, análisis técnico y psicología del trader.
 
@@ -54,7 +56,7 @@ export async function POST(req: NextRequest) {
       { role: 'user', content: message },
     ]
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       max_tokens: 1500,
       temperature: 0.7,
